@@ -10,7 +10,7 @@ const ListElments = ({ data }) => {
       {data.items.map((item) => {
         return (
           <div>
-            <Button className="pb-5" variant="h6" gutter>
+            <Button className="pb-5" variant="h6">
               {item}
             </Button>
           </div>

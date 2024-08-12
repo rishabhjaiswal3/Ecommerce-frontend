@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -9,6 +10,8 @@ import {
 import {navigationData} from './NavigationData';
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { deepPurple } from "@mui/material/colors"; 
+import AuthModal from "../../auth/AuthModal";
+import { useNavigate } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -19,7 +22,8 @@ export default function Navigation() {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-
+  const [userLogIn,setUserLogIn] = useState(true);
+  const navigate = useNavigate();
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,7 +40,7 @@ export default function Navigation() {
   };
 
   const handleCategoryClick = (category, section, item, close) => {
-    // navigate(`/${category.id}/${section.id}/${item.id}`);
+    navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
   };
 
@@ -371,7 +375,7 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {true ? 
+                  {userLogIn ? 
                   (
                     <div>
                       <Avatar
@@ -407,8 +411,8 @@ export default function Navigation() {
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem >
-                          ok 
+                        <MenuItem onClick={()=> navigate('/account/order')} >
+                          My Orders
                         </MenuItem>
                         <MenuItem >Logout</MenuItem>
                       </Menu>
@@ -436,6 +440,7 @@ export default function Navigation() {
                   </p>
                 </div>
 
+
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
                   <Button
@@ -458,7 +463,7 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
-      {/* <AuthModal handleClose={handleClose} open={openAuthModal} /> */}
+      <AuthModal handleClose={handleClose} open={openAuthModal} />
     </div>
   );
 }

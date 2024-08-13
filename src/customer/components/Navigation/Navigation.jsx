@@ -22,7 +22,7 @@ export default function Navigation() {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const [userLogIn,setUserLogIn] = useState(true);
+  const [userLogIn,setUserLogIn] = useState(false);
   const navigate = useNavigate();
 
   const handleUserClick = (event) => {

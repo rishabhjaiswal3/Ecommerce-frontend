@@ -1,11 +1,23 @@
 import { Grid, TextField, Button } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { register, getUser } from "../../Redux/Auth/Action";
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
 
+  const { auth } = useSelector((store) => store);
 
-    const navigate =useNavigate();
+  useEffect(() => {
+    
+    if (jwt) {
+      dispatch(getUser());
+    }
+  }, [jwt, auth.jwt]);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,6 +30,8 @@ const RegisterForm = () => {
       email: data.get("email"),
       password: data.get("password"),
     };
+
+    dispatch(register(userData));
 
     console.log("user data is ", userData);
   };
@@ -78,23 +92,20 @@ const RegisterForm = () => {
               Register
             </Button>
           </Grid>
-      
         </Grid>
       </form>
-      <div
-            style={{ marginTop: 4, display: "flex", justifyContent: "center"}}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <span>If you have already account ?</span>
-              <Button onClick={() => navigate("/login")}>Login</Button>
-            </div>
-          </div>
+      <div style={{ marginTop: 4, display: "flex", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <span>If you have already account ?</span>
+          <Button onClick={() => navigate("/login")}>Login</Button>
+        </div>
+      </div>
     </div>
   );
 };

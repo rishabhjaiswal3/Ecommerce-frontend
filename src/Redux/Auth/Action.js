@@ -13,7 +13,6 @@ import {
   GET_USER_SUCCESS,
 } from "./Action.Type";
 
-const token = localStorage.getItem("jwt");
 
 const registerRequest = () => ({ type: REGISTER_REQUEST });
 const registerSuccess = (token) => ({ type: REGISTER_SUCCESS, payload: token });
@@ -57,6 +56,7 @@ const getUserFailure = (error) => ({ type: GET_USER_FAILURE, payload: error });
 
 export const getUser = () => async (dispatch) => {
   dispatch(getUserRequest);
+  const token = localStorage.getItem("jwt");
   try {
     const response = await axios.get(`${API_BASE_URL}/api/users/profile`, {
       headers: {
@@ -64,7 +64,6 @@ export const getUser = () => async (dispatch) => {
       },
     });
     const user = response.data;
-    console.log("my user information is in get user ", user);
     dispatch(getUserSuccess(user));
   } catch (error) {
     dispatch(getUserFailure(error.message));

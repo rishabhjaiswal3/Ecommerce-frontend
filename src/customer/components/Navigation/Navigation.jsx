@@ -11,7 +11,9 @@ import {navigationData} from './NavigationData';
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { deepPurple } from "@mui/material/colors"; 
 import AuthModal from "../../auth/AuthModal";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser , logout} from "../../../Redux/Auth/Action";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -22,8 +24,12 @@ export default function Navigation() {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const [userLogIn,setUserLogIn] = useState(false);
   const navigate = useNavigate();
+  const {auth} = useSelector(store => store);
+  const jwt = localStorage.getItem("jwt");
+  const location = useLocation();
+
+  const dispatch = useDispatch();
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,6 +37,11 @@ export default function Navigation() {
   const handleCloseUserMenu = (event) => {
     setAnchorEl(null);
   };
+
+  const handleLogout = () => {
+    dispatch(logout())
+    handleCloseUserMenu();
+  }
 
   const handleOpen = () => {
     setOpenAuthModal(true);
@@ -43,6 +54,22 @@ export default function Navigation() {
     navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
   };
+
+  useEffect(()=>{
+    if(jwt) {
+      dispatch(getUser())
+    }
+  },[jwt,auth.jwt])
+
+  useEffect(()=>{
+    if(auth.user) {
+      handleClose();
+    }
+    if(location.pathname == '/login' || location.pathname == '/signup') {
+      navigate(-1);
+
+    }
+  },[auth.user])
 
 
   return (
@@ -375,7 +402,7 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {userLogIn ? 
+                  {auth.user ? 
                   (
                     <div>
                       <Avatar
@@ -384,14 +411,14 @@ export default function Navigation() {
                         aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        // onClick={handleUserClick}
                         sx={{
                           bgcolor: deepPurple[500],
                           color: "white",
                           cursor: "pointer",
                         }}
                       >
-                        R
+                        {auth?.user?.firstName?.[0].toUpperCase()}
+                        {/* {auth.user?.fullName[0].toUpperCase()} */}
                       </Avatar>
                       {/* <Button
                         id="basic-button"
@@ -414,7 +441,7 @@ export default function Navigation() {
                         <MenuItem onClick={()=> navigate('/account/order')} >
                           My Orders
                         </MenuItem>
-                        <MenuItem >Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                     </div>
                   ) : (
